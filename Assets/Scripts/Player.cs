@@ -6,7 +6,7 @@ using DG.Tweening;
 
 public class Player : MonoBehaviour
 {
-    public Rigidbody rbd_m;
+    public Rigidbody m_Rbd;
     public Renderer playerRend_m;
     #region PauseStuff
     [SerializeField]
@@ -47,8 +47,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool mustDash_m;
     [SerializeField]
-    float dashTime_m = 2f;
-    [SerializeField]
     bool ennemyCollided_m;
     [SerializeField]
     bool movingRight_m;
@@ -58,7 +56,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         ennemyCollided_m = false;
-        rbd_m = GetComponent<Rigidbody>();
+        m_Rbd = GetComponent<Rigidbody>();
         playerRend_m = GetComponent<Renderer>();
     }
 
@@ -68,19 +66,19 @@ public class Player : MonoBehaviour
         ManageInput();
         ManageGravityRatio();
         ManageJump();
-        isFalling_m = !onGround_m && rbd_m.velocity.y <= 0;
+        isFalling_m = !onGround_m && m_Rbd.velocity.y <= 0;
     }
     public void ManageInput()
     {
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && !mustDash_m)
         {
             movingLeft_m = true;
-            rbd_m.MovePosition(transform.position + transform.right * -speed_m);
+            m_Rbd.MovePosition(transform.position + transform.right * -speed_m);
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && !mustDash_m)
         {
             movingRight_m = true;
-            rbd_m.MovePosition(transform.position + transform.right * speed_m);
+            m_Rbd.MovePosition(transform.position + transform.right * speed_m);
         }
         if(Input.GetKeyUp(KeyCode.A))
         {
@@ -94,16 +92,12 @@ public class Player : MonoBehaviour
         {
             mustJump_m = true;
         }
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             mustDash_m = true;
+            playerRend_m.material.DOColor(Color.red, 0.2f);
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            dashTime_m = 2f;
-            playerRend_m.material.DOColor(Color.green, 0.2f);
-        }
-            if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (gameIsPaused_m)
             {
@@ -128,7 +122,7 @@ public class Player : MonoBehaviour
             } 
             else
             {
-                if(rbd_m.velocity.y <= 0)
+                if(m_Rbd.velocity.y <= 0)
                 {
                     isJumping_m = false;
                 }
@@ -156,7 +150,7 @@ public class Player : MonoBehaviour
     }
     public void Jump()
     {
-        rbd_m.AddForce(Vector3.up * jumpforce_m, ForceMode.Impulse);
+        m_Rbd.AddForce(Vector3.up * jumpforce_m, ForceMode.Impulse);
         isJumping_m = true;
         isFalling_m = false;
         onGround_m = false;
@@ -174,44 +168,50 @@ public class Player : MonoBehaviour
     {
         if (mustDash_m && ennemyCollided_m)        
         {
-            dashTime_m -= Time.deltaTime;
-            mustDash_m = false;
             PowerDash();
         }
         if(mustDash_m)
         {
-            dashTime_m -= Time.deltaTime;
-            mustDash_m = false;
             Dash();
         }
-        if(dashTime_m <= 0f)
-        {
-            rbd_m.velocity = Vector2.zero;
-        }
     }
+    private bool m_ResetTimer;
+    private float m_Timer = 0f;
     public void Dash()
     {
-        if(movingRight_m)
+        m_Timer += Time.deltaTime;
+
+        if(m_Timer > 2f)
         {
-            rbd_m.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
-            playerRend_m.material.DOColor(Color.red, 0.2f);
+            mustDash_m = false;
+            playerRend_m.material.DOColor(Color.green, 0.2f);
+            m_ResetTimer = true;
+        }
+        if(m_ResetTimer)
+        {
+            m_Timer = 0f;
+            m_ResetTimer = false;
+        }
+        if (movingRight_m)
+        {
+            m_Rbd.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
         }
         if (movingLeft_m)
         {
-            rbd_m.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
-            playerRend_m.material.DOColor(Color.red, 0.2f);
+            m_Rbd.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
         }
+        m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -10f, 10f), m_Rbd.velocity.y, m_Rbd.velocity.z);
     }
     public void PowerDash()
     {
         if (movingRight_m)
         {
-            rbd_m.AddForce(Vector3.right * powerfullDashForce_m, ForceMode.Impulse);
+            m_Rbd.AddForce(Vector3.right * powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
         }
         if (movingLeft_m)
         {
-            rbd_m.AddForce(Vector3.right * -powerfullDashForce_m, ForceMode.Impulse);
+            m_Rbd.AddForce(Vector3.right * -powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
         }
     }

@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    float hp_m;
+    Renderer m_renderer;
     [SerializeField]
     float speed_m;
     [SerializeField]
@@ -21,13 +22,16 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            m_renderer.material.DOColor(Color.green, 0);
+            m_renderer.material.DOColor(Color.blue, 0.5f);
+            m_renderer.material.DOColor(Color.red, 1);
+            
             Die();
         }
     }
-
     public void Die()
     {
-        Destroy(gameObject);
+        Destroy(gameObject,3f);
     }
 
 
