@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class ToolBox : MonoBehaviour
 {
-    public GameObject playerPrefab_m;
-    public Player player_m;
+    public GameObject m_playerPrefab;
+    public Player m_player;
     #region Singleton
     private static ToolBox instance;
     public static ToolBox Instance

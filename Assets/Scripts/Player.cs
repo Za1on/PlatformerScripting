@@ -11,60 +11,60 @@ public class Player : MonoBehaviour
     [SerializeField]
     float m_playerHp = 3;
     public Rigidbody m_Rbd;
-    public Renderer playerRend_m;
+    public Renderer m_playerRend;
     #region PauseStuff
     [SerializeField]
-    bool gameIsPaused_m;
-    public GameObject pauzeMenuObject_m;
+    bool m_GameIsPaused;
+    public GameObject m_PauzeMenuObject;
     #endregion
     #region JumpStuff
     [SerializeField]
-    float fallingGravityRatio_m;
+    float m_FallingGravityRatio;
     [SerializeField]
-    float jumpingGravityRatio_m;
+    float m_JumpingGravityRatio;
     [SerializeField]
-    float onFloorGravityRatio_m;
+    float m_OnFloorGravityRatio;
     [SerializeField]
-    float jumpCancelingGravityRatio_m;
+    float m_JumpCancelingGravityRatio;
     [SerializeField]
-    float jumpforce_m;
+    float m_Jumpforce;
     [SerializeField]
-    bool jumpButtonPressed_m;
+    bool m_JumpButtonPressed;
     [SerializeField]
-    bool onGround_m;
+    bool m_OnGround;
     [SerializeField]
-    bool mustJump_m;
+    bool m_MustJump;
     [SerializeField]
-    bool isJumping_m;
+    bool m_IsJumping;
     [SerializeField]
-    bool isFalling_m;
+    bool m_IsFalling;
     #endregion
     #region DashStuff
     [SerializeField]
-    float speed_m;
+    float m_Speed;
     [SerializeField]
-    float dashForce_m;
+    float m_DashForce;
     [SerializeField]
-    float powerfullDashForce_m;
+    float m_PowerfullDashForce;
     [SerializeField]
-    bool dashButtonPressed_m;
+    bool m_DashButtonPressed;
     [SerializeField]
-    bool mustDash_m;
+    bool m_MustDash;
     [SerializeField]
-    bool mustPowerDash_m;
+    bool m_MustPowerDash;
     [SerializeField]
-    bool ennemyCollided_m;
+    bool m_ennemyCollided;
     [SerializeField]
-    bool movingRight_m;
+    bool m_MovingRight;
     [SerializeField]
-    bool movingLeft_m;
+    bool m_MovingLeft;
     #endregion
     void Start()
     {
         m_anim = GetComponent<Animator>();
-        ennemyCollided_m = false;
+        m_ennemyCollided = false;
         m_Rbd = GetComponent<Rigidbody>();
-        playerRend_m = GetComponent<Renderer>();
+        m_playerRend = GetComponent<Renderer>();
     }
 
     void Update()
@@ -77,44 +77,44 @@ public class Player : MonoBehaviour
         ManageInput();
         ManageGravityRatio();
         ManageJump();
-        isFalling_m = !onGround_m && m_Rbd.velocity.y <= 0;
+        m_IsFalling = !m_OnGround && m_Rbd.velocity.y <= 0;
     }
     public void ManageInput()
     {
-        if (Input.GetKey(KeyCode.A) && !mustDash_m)
+        if (Input.GetKey(KeyCode.A) && !m_MustDash)
         {
-            movingLeft_m = true;
-            m_Rbd.MovePosition(transform.position + transform.right * -speed_m);
+            m_MovingLeft = true;
+            m_Rbd.MovePosition(transform.position + transform.right * - m_Speed);
         }
-        if (Input.GetKey(KeyCode.D) && !mustDash_m)
+        if (Input.GetKey(KeyCode.D) && !m_MustDash)
         {
-            movingRight_m = true;
-            m_Rbd.MovePosition(transform.position + transform.right * speed_m);
+            m_MovingRight = true;
+            m_Rbd.MovePosition(transform.position + transform.right * m_Speed);
         }
         if(Input.GetKeyUp(KeyCode.A))
         {
-            movingLeft_m = false;
+            m_MovingLeft = false;
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            movingRight_m = false;
+            m_MovingRight = false;
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            mustJump_m = true;
+            m_MustJump = true;
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if(ennemyCollided_m)
+            if(m_ennemyCollided)
             {  
-                mustPowerDash_m = true;
+                m_MustPowerDash = true;
             }
             else
-            mustDash_m = true;          
+            m_MustDash = true;          
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (gameIsPaused_m)
+            if (m_GameIsPaused)
             {
                 Resume();
             }
@@ -132,10 +132,10 @@ public class Player : MonoBehaviour
     public void ManageJump()
     {
         
-        if (mustJump_m)
+        if (m_MustJump)
         {
-            mustJump_m = false;
-            if(onGround_m)
+            m_MustJump = false;
+            if(m_OnGround)
             {
                 m_anim.SetBool("isInTheAir", true);
                 Jump();
@@ -144,52 +144,52 @@ public class Player : MonoBehaviour
             {
                 if(m_Rbd.velocity.y <= 0)
                 {
-                    isJumping_m = false;
+                    m_MustJump = false;
                 }
             }
         }
     }
     public void ManageGravityRatio()
     {
-        float desiredGravityRatio = onFloorGravityRatio_m;
-        if (isJumping_m)
+        float desiredGravityRatio = m_OnFloorGravityRatio;
+        if (m_IsJumping)
         {
-            if (!jumpButtonPressed_m)
+            if (!m_JumpButtonPressed)
             {
-                desiredGravityRatio = jumpCancelingGravityRatio_m;
+                desiredGravityRatio = m_JumpCancelingGravityRatio;
             }
             else
             {
-                desiredGravityRatio = jumpingGravityRatio_m;
+                desiredGravityRatio = m_JumpingGravityRatio;
             }
         }
-        else if (isFalling_m)
+        else if (m_IsFalling)
         {      
-          desiredGravityRatio = fallingGravityRatio_m;
+          desiredGravityRatio = m_FallingGravityRatio;
         }
     }
     public void Jump()
     {
-        m_Rbd.AddForce(Vector3.up * jumpforce_m, ForceMode.Impulse);
-        isJumping_m = true;
-        isFalling_m = false;
-        onGround_m = false;
+        m_Rbd.AddForce(Vector3.up * m_Jumpforce, ForceMode.Impulse);
+        m_IsJumping = true;
+        m_IsFalling = false;
+        m_OnGround = false;
     }
     private void OnCollisionEnter(Collision other)
     {
         m_anim.SetBool("isInTheAir", false);
-        isJumping_m = false;
-        isFalling_m = false;
-        onGround_m = true;
+        m_IsJumping = false;
+        m_IsFalling = false;
+        m_OnGround = true;
         if(other.gameObject.CompareTag("Enemy"))
         {
-            if (mustDash_m)
+            if (m_MustDash)
             {
                 return;
             }
             else
                 m_playerHp -= 1f;
-            playerRend_m.material.DOColor(Color.red, 0.2f);
+            m_playerRend.material.DOColor(Color.red, 0.2f);
         }
     }
     #endregion
@@ -197,11 +197,11 @@ public class Player : MonoBehaviour
     #region DashManagament
     public void ManageDash()
     {
-        if (mustPowerDash_m)
+        if (m_MustPowerDash)
         {
             PowerDash();
         }
-        if(mustDash_m)
+        if(m_MustDash)
         {
             Dash();
         }
@@ -215,8 +215,8 @@ public class Player : MonoBehaviour
         if(m_Timer > 1.5f)
         {
             m_particle.SetActive(false);
-            mustDash_m = false;
-            playerRend_m.material.DOColor(Color.green, 0.1f);
+            m_MustDash = false;
+            m_playerRend.material.DOColor(Color.green, 0.1f);
             m_ResetTimer = true;
         }
         if (m_ResetTimer)
@@ -224,15 +224,15 @@ public class Player : MonoBehaviour
             m_Timer = 0f;
             m_ResetTimer = false;
         }
-        if (movingRight_m)
+        if (m_MovingRight)
         {
             m_particle.SetActive(true);
-            m_Rbd.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
+            m_Rbd.AddForce(Vector3.right * m_DashForce, ForceMode.Impulse);
         }
-        if (movingLeft_m)
+        if (m_MovingLeft)
         {
             m_particle.SetActive(true);
-            m_Rbd.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
+            m_Rbd.AddForce(Vector3.right * -m_DashForce, ForceMode.Impulse);
         }
         m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -5f, 5f), m_Rbd.velocity.y, m_Rbd.velocity.z);
     }
@@ -243,8 +243,8 @@ public class Player : MonoBehaviour
         if (m_Timer > 1.5f)
         {
             m_particle.SetActive(false);
-            playerRend_m.material.DOColor(Color.green, 0.1f);
-            mustDash_m = false;
+            m_playerRend.material.DOColor(Color.green, 0.1f);
+            m_MustDash = false;
             m_ResetTimer = true;
         }
         if (m_ResetTimer)
@@ -252,19 +252,19 @@ public class Player : MonoBehaviour
             m_Timer = 0f;
             m_ResetTimer = false;
         }
-        if (movingRight_m)
+        if (m_MovingRight)
         {
             m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.up * 0.01f , ForceMode.Impulse);
-            m_Rbd.AddForce(Vector3.right * powerfullDashForce_m, ForceMode.Impulse);
-            ennemyCollided_m = false;
+            m_Rbd.AddForce(Vector3.right * m_PowerfullDashForce, ForceMode.Impulse);
+            m_ennemyCollided = false;
         }
-        if (movingLeft_m)
+        if (m_MovingLeft)
         {
             m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.up * 0.01f, ForceMode.Impulse);
-            m_Rbd.AddForce(Vector3.right * -powerfullDashForce_m, ForceMode.Impulse);
-            ennemyCollided_m = false;
+            m_Rbd.AddForce(Vector3.right * -m_PowerfullDashForce, ForceMode.Impulse);
+            m_ennemyCollided = false;
         }
         m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -10f, 10f), m_Rbd.velocity.y, m_Rbd.velocity.z);
     
@@ -274,8 +274,8 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             // Turning blue is suppose to be an indication for the PowerDash, but its not working right now.
-            playerRend_m.material.DOColor(Color.blue,0.1f);
-            ennemyCollided_m = true;
+            m_playerRend.material.DOColor(Color.blue,0.1f);
+            m_ennemyCollided = true;
         }
     }
     #endregion
@@ -283,9 +283,9 @@ public class Player : MonoBehaviour
     #region PauseManagement
     public void Resume()
     {
-        pauzeMenuObject_m.SetActive(false);
+        m_PauzeMenuObject.SetActive(false);
         Time.timeScale = 1f;
-        gameIsPaused_m = false;
+        m_GameIsPaused = false;
     }
     public void Restart()
     {
@@ -294,15 +294,15 @@ public class Player : MonoBehaviour
     }
     public void Pause()
     {
-        pauzeMenuObject_m.SetActive(true);
+        m_PauzeMenuObject.SetActive(true);
         Time.timeScale = 0f;
-        gameIsPaused_m = true;
+        m_GameIsPaused = true;
     }
     public void QuitCurrentGame()
     {
         SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1f;
-        pauzeMenuObject_m.SetActive(false);
+        m_PauzeMenuObject.SetActive(false);
     }
     #endregion
 }

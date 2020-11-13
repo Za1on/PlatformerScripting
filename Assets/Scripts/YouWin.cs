@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class YouWin : MonoBehaviour
 {
-    public GameObject YouWin_m;
+    public GameObject m_YouWin;
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             Time.timeScale = 0f;
-            YouWin_m.SetActive(true);
+            m_YouWin.SetActive(true);
         }
     }
 }

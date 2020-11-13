@@ -1760,11 +1760,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4862639118965762685, guid: 722cea6416b7eb8469df9cf97d3e12b0,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.287
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 722cea6416b7eb8469df9cf97d3e12b0, type: 3}
 --- !u!4 &1183256676 stripped
@@ -6737,9 +6732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0167792f7b493e4b9541499a075c978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab_m: {fileID: 6578181626215437348, guid: 7c1561f2d11bbc4449c675d2d605c83d,
-    type: 3}
-  player_m: {fileID: 186024258}
+  m_playerPrefab: {fileID: 0}
+  m_player: {fileID: 0}
 --- !u!1001 &1344554795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7614,7 +7608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4703742d34fab94fb1e242401e73a32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  YouWin_m: {fileID: 1261591219}
+  m_YouWin: {fileID: 0}
 --- !u!1 &1988478620
 GameObject:
   m_ObjectHideFlags: 0
@@ -7959,6 +7953,41 @@ PrefabInstance:
       propertyPath: m_particle
       value: 
       objectReference: {fileID: 1244740155}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_FallingGravityRatio
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_JumpCancelingGravityRatio
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_JumpingGravityRatio
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_Jumpforce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_Speed
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_DashForce
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6578181626215437402, guid: 7c1561f2d11bbc4449c675d2d605c83d,
+        type: 3}
+      propertyPath: m_PowerfullDashForce
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6578181626215437403, guid: 7c1561f2d11bbc4449c675d2d605c83d,
         type: 3}
       propertyPath: m_Size.x
