@@ -6,6 +6,9 @@ using DG.Tweening;
 
 public class Player : MonoBehaviour
 {
+    public Animator m_anim;
+    [SerializeField]
+    float m_playerHp = 3;
     public Rigidbody m_Rbd;
     public Renderer playerRend_m;
     #region PauseStuff
@@ -47,6 +50,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool mustDash_m;
     [SerializeField]
+    bool mustPowerDash_m;
+    [SerializeField]
     bool ennemyCollided_m;
     [SerializeField]
     bool movingRight_m;
@@ -55,6 +60,7 @@ public class Player : MonoBehaviour
     #endregion
     void Start()
     {
+        m_anim = GetComponent<Animator>();
         ennemyCollided_m = false;
         m_Rbd = GetComponent<Rigidbody>();
         playerRend_m = GetComponent<Renderer>();
@@ -62,6 +68,10 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (m_playerHp == 0)
+        {
+            Die();
+        }
         ManageDash();
         ManageInput();
         ManageGravityRatio();
@@ -94,8 +104,12 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            mustDash_m = true;
-            playerRend_m.material.DOColor(Color.red, 0.2f);
+            if(ennemyCollided_m)
+            {  
+                mustPowerDash_m = true;
+            }
+            else
+            mustDash_m = true;          
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -109,6 +123,10 @@ public class Player : MonoBehaviour
             }
         }
     }
+    public void Die()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
     #region JumpManagement
     public void ManageJump()
     {
@@ -118,6 +136,7 @@ public class Player : MonoBehaviour
             mustJump_m = false;
             if(onGround_m)
             {
+                m_anim.SetBool("isInTheAir", true);
                 Jump();
             } 
             else
@@ -155,18 +174,29 @@ public class Player : MonoBehaviour
         isFalling_m = false;
         onGround_m = false;
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision other)
     {
+        m_anim.SetBool("isInTheAir", false);
         isJumping_m = false;
         isFalling_m = false;
         onGround_m = true;
+        if(other.gameObject.CompareTag("Enemy"))
+        {
+            if (mustDash_m)
+            {
+                return;
+            }
+            else
+                m_playerHp -= 1f;
+            playerRend_m.material.DOColor(Color.red, 0.2f);
+        }
     }
     #endregion
 
     #region DashManagament
     public void ManageDash()
     {
-        if (mustDash_m && ennemyCollided_m)        
+        if (mustPowerDash_m)
         {
             PowerDash();
         }
@@ -181,44 +211,63 @@ public class Player : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
-        if(m_Timer > 2f)
+        if(m_Timer > 1.5f)
         {
             mustDash_m = false;
-            playerRend_m.material.DOColor(Color.green, 0.2f);
+            playerRend_m.material.DOColor(Color.green, 0.1f);
             m_ResetTimer = true;
         }
-        if(m_ResetTimer)
+        if (m_ResetTimer)
+        {
+            m_Timer = 0f;
+            m_ResetTimer = false;
+        }
+        if (movingRight_m)
+        {           
+            m_Rbd.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
+        }
+        if (movingLeft_m)
+        {            
+            m_Rbd.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
+        }
+        m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -5f, 5f), m_Rbd.velocity.y, m_Rbd.velocity.z);
+    }
+    public void PowerDash()
+    {
+        m_Timer += Time.deltaTime;
+
+        if (m_Timer > 1.5f)
+        {
+            playerRend_m.material.DOColor(Color.green, 0.1f);
+            mustDash_m = false;
+            m_ResetTimer = true;
+        }
+        if (m_ResetTimer)
         {
             m_Timer = 0f;
             m_ResetTimer = false;
         }
         if (movingRight_m)
         {
-            m_Rbd.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
-        }
-        if (movingLeft_m)
-        {
-            m_Rbd.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
-        }
-        m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -10f, 10f), m_Rbd.velocity.y, m_Rbd.velocity.z);
-    }
-    public void PowerDash()
-    {
-        if (movingRight_m)
-        {
+            m_Rbd.AddForce(Vector3.up * 0.01f , ForceMode.Impulse);
             m_Rbd.AddForce(Vector3.right * powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
         }
         if (movingLeft_m)
         {
+            m_Rbd.AddForce(Vector3.up * 0.01f, ForceMode.Impulse);
             m_Rbd.AddForce(Vector3.right * -powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
         }
-    }
-    private void OnTriggerEnter(Collider other)
+        m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -10f, 10f), m_Rbd.velocity.y, m_Rbd.velocity.z);
+    
+}
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
+            // Turning blue is suppose to be an indication for the PowerDash, but its not working right now.
+            playerRend_m.material.DOColor(Color.blue,0.1f);
             ennemyCollided_m = true;
         }
     }

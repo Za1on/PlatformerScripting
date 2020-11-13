@@ -32,18 +32,6 @@ public class ToolBox : MonoBehaviour
     }
 
     #endregion
-    public void Start()
-    {
-
-    }
-
-    private void Update()
-    {
-        if (player_m == null)
-        {
-            SceneManager.LoadScene("GameScene");
-        }
-    }
 }
 
 

@@ -37,7 +37,6 @@ public class HookShot : MonoBehaviour
             if (Physics.Raycast(camera_m.transform.position, camera_m.transform.forward, out hit, range_m))
             {
                 target_m.transform.position = hit.point;
-                //hit.transform.position = Vector3.MoveTowards(hit.transform.position, hooktarget.myself_m, pullSpeed);
             }
         }
     }
