@@ -6,6 +6,7 @@ using DG.Tweening;
 
 public class Player : MonoBehaviour
 {
+    public GameObject m_particle;
     public Animator m_anim;
     [SerializeField]
     float m_playerHp = 3;
@@ -213,6 +214,7 @@ public class Player : MonoBehaviour
 
         if(m_Timer > 1.5f)
         {
+            m_particle.SetActive(false);
             mustDash_m = false;
             playerRend_m.material.DOColor(Color.green, 0.1f);
             m_ResetTimer = true;
@@ -223,11 +225,13 @@ public class Player : MonoBehaviour
             m_ResetTimer = false;
         }
         if (movingRight_m)
-        {           
+        {
+            m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.right * dashForce_m, ForceMode.Impulse);
         }
         if (movingLeft_m)
-        {            
+        {
+            m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.right * -dashForce_m, ForceMode.Impulse);
         }
         m_Rbd.velocity = new Vector3(Mathf.Clamp(m_Rbd.velocity.x, -5f, 5f), m_Rbd.velocity.y, m_Rbd.velocity.z);
@@ -238,6 +242,7 @@ public class Player : MonoBehaviour
 
         if (m_Timer > 1.5f)
         {
+            m_particle.SetActive(false);
             playerRend_m.material.DOColor(Color.green, 0.1f);
             mustDash_m = false;
             m_ResetTimer = true;
@@ -249,12 +254,14 @@ public class Player : MonoBehaviour
         }
         if (movingRight_m)
         {
+            m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.up * 0.01f , ForceMode.Impulse);
             m_Rbd.AddForce(Vector3.right * powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
         }
         if (movingLeft_m)
         {
+            m_particle.SetActive(true);
             m_Rbd.AddForce(Vector3.up * 0.01f, ForceMode.Impulse);
             m_Rbd.AddForce(Vector3.right * -powerfullDashForce_m, ForceMode.Impulse);
             ennemyCollided_m = false;
